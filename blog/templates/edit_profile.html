@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Редагування профілю</h1>
+    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_username" class="form-label">Ім'я користувача:</label>
+            {{ form.username }}
+            <div class="form-text">Обов'язкове поле. Не більше 150 символів. Тільки букви, цифри і символи @/./+/-/_.</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_first_name" class="form-label">Ім'я:</label>
+            {{ form.first_name }}
+        </div>
+        <div class="mb-3">
+            <label for="id_last_name" class="form-label">Прізвище:</label>
+            {{ form.last_name }}
+        </div>
+        <div class="mb-3">
+            <label for="id_email" class="form-label">Адреса електронної пошти:</label>
+            {{ form.email }}
+        </div>
+        <div class="mb-3">
+            <label for="id_avatar" class="form-label">Аватар:</label>
+            {{ form.avatar }}
+        </div>
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+    </form>
+</div>
+{% endblock %}

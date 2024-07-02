@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">{{ post.title }}</h1>
+
+    {% if post.photo %}
+    <div class="mb-4">
+        <img class="img-fluid rounded" src="{{ post.photo.url }}" alt="{{ post.title }}">
+    </div>
+    {% endif %}
+
+    <div class="mb-4">
+        {{ post.content|linebreaks }}
+    </div>
+
+    <div class="mb-3">
+        <p><strong>Лайки:</strong> <span id="like_count">{{ post.likes.count }}</span> <strong>Дизлайки:</strong> <span id="dislike_count">{{ post.dislikes.count }}</span></p>
+    </div>
+
+    {% if request.user.is_authenticated %}
+    <form id="like_form" method="post" action="{% url 'toggle_like' post.slug %}" class="mb-4 d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-success">
+            {% if request.user in post.likes.all %}
+                <i class="bi bi-hand-thumbs-up-fill"></i>
+            {% else %}
+                <i class="bi bi-hand-thumbs-up"></i>
+            {% endif %}
+        </button>
+    </form>
+    <form id="dislike_form" method="post" action="{% url 'toggle_dislike' post.slug %}" class="mb-4 d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger">
+            {% if request.user in post.dislikes.all %}
+                <i class="bi bi-hand-thumbs-down-fill"></i>
+            {% else %}
+                <i class="bi bi-hand-thumbs-down"></i>
+            {% endif %}
+        </button>
+    </form>
+    {% else %}
+    <p>Авторизуйтесь, щоб ставити лайки та дизлайки.</p>
+    {% endif %}
+
+    {% if request.user == post.author or request.user.is_superuser %}
+    <div class="mb-4">
+        <a href="{% url 'edit_post' post.slug %}" class="btn btn-outline-secondary">Редагувати статтю</a>
+        <form method="post" action="{% url 'delete_post' post.slug %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">Видалити статтю</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <h2 class="mt-4">Коментарі:</h2>
+    <div id="comment-list">
+        {% for comment in post.comments.all %}
+        <div class="comment mb-3" id="comment-{{ comment.id }}">
+            <div class="d-flex">
+                <div>
+                    {% if comment.user.profile.avatar %}
+                        <img src="{{ comment.user.profile.avatar.url }}" alt="Аватар" class="img-thumbnail" width="50" height="50">
+                    {% else %}
+                        <img src="{% static 'default_avatar.png' %}" alt="Аватар за замовчуванням" class="img-thumbnail" width="50" height="50">
+                    {% endif %}
+                </div>
+                <div class="ms-3">
+                    <p><strong>{{ comment.user.username }}</strong> {{ comment.created_at }}</p>
+                    <p>{{ comment.content|linebreaks }}</p>
+                    <p><strong>Лайки:</strong> <span id="comment-like-count-{{ comment.id }}">{{ comment.comment_likes.count }}</span> <strong>Дизлайки:</strong> <span id="comment-dislike-count-{{ comment.id }}">{{ comment.comment_dislikes.count }}</span></p>
+                    {% if request.user.is_authenticated %}
+                    <form id="like_comment_{{ comment.id }}_form" method="post" action="{% url 'toggle_comment_like' post.slug comment.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-success btn-sm">
+                            {% if request.user in comment.comment_likes.all %}
+                                <i class="bi bi-hand-thumbs-up-fill"></i>
+                            {% else %}
+                                <i class="bi bi-hand-thumbs-up"></i>
+                            {% endif %}
+                        </button>
+                    </form>
+                    <form id="dislike_comment_{{ comment.id }}_form" method="post" action="{% url 'toggle_comment_dislike' post.slug comment.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            {% if request.user in comment.comment_dislikes.all %}
+                                <i class="bi bi-hand-thumbs-down-fill"></i>
+                            {% else %}
+                                <i class="bi bi-hand-thumbs-down"></i>
+                            {% endif %}
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% if request.user == comment.user or request.user.is_superuser %}
+                    <a href="{% url 'edit_comment' post.slug comment.id %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i> Редагувати
+                    </a>
+                    <form method="post" action="{% url 'delete_comment' post.slug comment.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Видалити
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Немає коментарів</p>
+        {% endfor %}
+    </div>
+
+    {% if request.user.is_authenticated %}
+    <form id="comment-form" method="post" action="{% url 'add_comment' post.slug %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="commentContent" class="form-label">Додати коментар:</label>
+            <textarea id="commentContent" name="content" rows="4" class="form-control" placeholder="Введіть ваш коментар"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Додати коментар</button>
+    </form>
+    {% else %}
+    <p>Авторизуйтесь, щоб додати коментар.</p>
+    {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#like_form, #dislike_form').on('submit', function(event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(response) {
+                    $('#like_count').text(response.likes_count);
+                    $('#dislike_count').text(response.dislikes_count);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        {% for comment in post.comments.all %}
+        $('#like_comment_{{ comment.id }}_form, #dislike_comment_{{ comment.id }}_form').on('submit', function(event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(response) {
+                    $('#comment-like-count-{{ comment.id }}').text(response.comment_likes_count);
+                    $('#comment-dislike-count-{{ comment.id }}').text(response.comment_dislikes_count);
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+        {% endfor %}
+    });
+</script>
+{% endblock %}

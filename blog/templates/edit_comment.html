@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Редагувати коментар</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="commentContent" class="form-label">Коментар:</label>
+            {{ form.content }}
+        </div>
+        <button type="submit" class="btn btn-primary">Зберегти зміни</button>
+        <a href="{% url 'post' post.slug %}" class="btn btn-secondary">Відміна</a>
+    </form>
+</div>
+{% endblock %}

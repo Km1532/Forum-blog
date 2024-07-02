@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Видалити статтю</h1>
+  <p>Ви впевнені, що хочете видалити цю статтю?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Так, видалити</button>
+    <a href="{% url 'post' post.slug %}">Скасувати</a>
+  </form>
+{% endblock %}

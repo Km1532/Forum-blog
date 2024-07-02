@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ title }}</h1>
+
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+
+        <div class="form-error">{{ form.non_field_errors }}</div>
+
+        <div class="mb-3">
+            <label class="form-label" for="id_username">Ім'я користувача:</label>
+            {{ form.username }}
+            <div class="form-error">{{ form.username.errors }}</div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="id_password">Пароль:</label>
+            {{ form.password }}
+            <div class="form-error">{{ form.password.errors }}</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Увійти</button>
+    </form>
+
+    <hr>
+    <div class="text-center">
+        <p>Або авторизуйтесь через:</p>
+        <a href="{% url 'soon_page' %}" class="btn btn-dark">
+            <i class="bi bi-google mx-1"></i> Google
+        </a>
+        <a href="{% url 'soon_page' %}" class="btn btn-dark">
+            <i class="bi bi-facebook mx-1"></i> Facebook
+        </a>
+        <a href="{% url 'soon_page' %}" class="btn btn-dark">
+            <i class="bi bi-github mx-1"></i> GitHub
+        </a>
+    </div>
+</div>
+{% endblock %}

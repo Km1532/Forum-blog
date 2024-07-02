@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+    <style>
+        .content-container {
+            background-color: black;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Скоро{% endblock %}
+
+{% block content %}
+    <div class="mt-5 pt-5 content-container custom-shadow rounded">
+        <h2 class="m-2">Сторінка у розробці</h2>
+        <p class="m-2">Вибачте за незручності, але ця сторінка знаходиться у розробці.</p>
+        <p class="m-2">Ми намагаємося зробити її якнайшвидше!</p>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <footer class="py-4 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Sandy Team 2024</p>
+        </div>
+    </footer>
+{% endblock %}
