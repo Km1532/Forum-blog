@@ -2,11 +2,11 @@ from django.contrib import admin
 from .models import Blog, Category, Comment, CustomUser
 
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'time_create', 'photo', 'status')  # Оновлено поле 'is_published' на 'status'
+    list_display = ('id', 'title', 'time_create', 'photo', 'status') 
     list_display_links = ('id', 'title')
     search_fields = ('title', 'content')
-    list_editable = ('status',)  # Оновлено поле 'is_published' на 'status'
-    list_filter = ('status', 'time_create')  # Оновлено поле 'is_published' на 'status'
+    list_editable = ('status',) 
+    list_filter = ('status', 'time_create') 
     prepopulated_fields = {"slug": ("title",)}
 
 class CategoryAdmin(admin.ModelAdmin):

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Видалити чернетку{% endblock %}
+
+{% block content %}
+<h1>Ви впевнені, що хочете видалити чернетку "{{ draft.title }}"?</h1>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Так, видалити</button>
+    <a href="{% url 'drafts' %}">Ні, повернутися</a>
+</form>
+{% endblock %}

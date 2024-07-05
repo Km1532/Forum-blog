@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Ваші чернетки{% endblock %}
+
+{% block content %}
+{% if drafts %}
+    <h1>Ваші чернетки</h1>
+    <ul>
+        {% for draft in drafts %}
+            <li>
+                <a href="{% url 'edit_draft' draft.pk %}">{{ draft.title }}</a> - {{ draft.created_at }}
+                <form action="{% url 'delete_draft' draft.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Видалити</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Немає чернеток.</p>
+{% endif %}
+{% endblock %}

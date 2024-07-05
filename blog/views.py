@@ -18,6 +18,8 @@ from .utils import send_new_article_notification
 from django.contrib.auth import logout
 from django.contrib.auth import login
 from .forms import *
+from django.utils.text import slugify
+from .models import Blog, Draft  
 
 class BlogHome(ListView):
     model = Blog
@@ -50,7 +52,64 @@ class AddPage(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.status = 'draft'
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_drafts = Blog.objects.filter(author=self.request.user, status='draft')
+        if user_drafts.exists():
+            context['drafts'] = user_drafts
+        context['title'] = 'Додати сторінку'
+        return context
+
+@login_required
+def save_draft(request, pk=None):
+    if pk:
+        draft = get_object_or_404(Blog, pk=pk, author=request.user, status='draft')
+        form = AddPostForm(request.POST or None, request.FILES or None, instance=draft)
+    else:
+        form = AddPostForm(request.POST or None, request.FILES or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            draft = form.save(commit=False)
+            draft.author = request.user
+            draft.status = 'draft'
+            
+            if not draft.slug:
+                draft.slug = generate_unique_slug(draft.title)
+            
+            draft.save()
+            return redirect('drafts')  
+
+    user_drafts = Blog.objects.filter(author=request.user, status='draft')
+    return render(request, 'drafts.html', {'form': form, 'drafts': user_drafts, 'title': 'Чернетки'})
+  
+
+def generate_unique_slug(title):
+    slug = slugify(title)
+    counter = 1
+    while Blog.objects.filter(slug=slug).exists():
+        slug = f'{slug}-{counter}'
+        counter += 1
+    return slug
+
+def generate_unique_slug(title):
+    slug = slugify(title)
+    counter = 1
+    while Blog.objects.filter(slug=slug).exists():
+        slug = f'{slug}-{counter}'
+        counter += 1
+    return slug
+
+def generate_unique_slug(title):
+    slug = slugify(title)
+    counter = 1
+    while Blog.objects.filter(slug=slug).exists():
+        slug = f'{slug}-{counter}'
+        counter += 1
+    return slug
 
 def contact(request):
     if request.method == 'POST':
@@ -313,4 +372,34 @@ class LoginUser(LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
     
-    print("22")
+@login_required
+def drafts(request):
+    user_drafts = Blog.objects.filter(author=request.user, status='draft')
+    return render(request, 'drafts.html', {'drafts': user_drafts, 'title': 'Чернетки'})
+
+@login_required
+def edit_draft(request, pk):
+    draft = get_object_or_404(Blog, pk=pk, author=request.user, status='draft')
+
+    if request.method == 'POST':
+        form = AddPostForm(request.POST, request.FILES, instance=draft)
+        if form.is_valid():
+            draft = form.save(commit=False)
+            draft.author = request.user
+            draft.save()
+            return redirect('drafts')  # Перенаправлення на сторінку з усіма чернетками
+        else:
+            # Вивести на консоль помилки валідації форми, якщо вони є
+            print(form.errors)
+    else:
+        form = AddPostForm(instance=draft)
+
+    return render(request, 'edit_draft.html', {'form': form, 'draft': draft})   
+
+@login_required
+def delete_draft(request, pk):
+    draft = get_object_or_404(Blog, pk=pk, status='draft', author=request.user)
+    if request.method == 'POST':
+        draft.delete()
+        return redirect('drafts')
+    return render(request, 'delete_draft.html', {'draft': draft, 'title': 'Видалити чернетку'})

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from .models import Blog, Comment, CustomUser, Profile
+from .models import Draft
 
 class AddPostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -58,3 +59,9 @@ class EditProfileForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ('username', 'email', 'first_name', 'last_name', 'avatar')
+
+
+class DraftForm(forms.ModelForm):
+    class Meta:
+        model = Draft
+        fields = ['title', 'content', 'status', 'photo', 'cat']
