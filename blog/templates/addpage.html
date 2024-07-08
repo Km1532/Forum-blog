@@ -12,10 +12,32 @@
 
             <div class="form-error">{{ form.non_field_errors }}</div>
 
-            {% for f in form %}
-                <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}</p>
-                <div class="form-error">{{ f.errors }}</div>
-            {% endfor %}
+            <p><label class="form-label" for="{{ form.title.id_for_label }}">{{ form.title.label }}:</label> {{ form.title }}</p>
+            <div class="form-error">{{ form.title.errors }}</div>
+
+            <p><label class="form-label" for="{{ form.slug.id_for_label }}">{{ form.slug.label }}:</label> {{ form.slug }}</p>
+            <div class="form-error">{{ form.slug.errors }}</div>
+
+            <p><label class="form-label" for="{{ form.content.id_for_label }}">{{ form.content.label }}:</label> {{ form.content }}</p>
+            <div class="form-error">{{ form.content.errors }}</div>
+
+            <p><label class="form-label" for="{{ form.photo.id_for_label }}">{{ form.photo.label }}:</label> {{ form.photo }}</p>
+            <div class="form-error">{{ form.photo.errors }}</div>
+
+            <p><label class="form-label" for="{{ form.status.id_for_label }}">{{ form.status.label }}:</label> {{ form.status }}</p>
+            <div class="form-error">{{ form.status.errors }}</div>
+
+            <div class="mb-4">
+                <label class="form-label" for="{{ form.tags.id_for_label }}">{{ form.tags.label }}:</label>
+                {{ form.tags }}
+                <div class="form-error">{{ form.tags.errors }}</div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label" for="{{ form.cat.id_for_label }}">{{ form.cat.label }}:</label>
+                {{ form.cat }}
+                <div class="form-error">{{ form.cat.errors }}</div>
+            </div>
 
             <button type="submit" class="btn btn-primary">Додати</button>
         </form>

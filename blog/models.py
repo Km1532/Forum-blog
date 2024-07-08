@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 from django.urls import reverse
 from django.conf import settings
+from taggit.managers import TaggableManager
 
 class CustomUser(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, default='avatars/default_avatar.png')
@@ -52,6 +53,7 @@ class Blog(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts', verbose_name="Автор", null=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True, verbose_name="Лайки", through='PostLike')
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_posts', blank=True, verbose_name="Дизлайки", through='PostDislike')
+    tags = TaggableManager()  
 
     def __str__(self):
         return self.title
@@ -161,3 +163,18 @@ class Draft(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Tag(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Назва тегу")
+    slug = models.SlugField(max_length=255, unique=True, verbose_name="URL")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('tag', kwargs={'tag_slug': self.slug})
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+        ordering = ['id']

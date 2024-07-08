@@ -2,18 +2,24 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from .models import Blog, Comment, CustomUser, Profile
 from .models import Draft
+from taggit.forms import TagField  
 
 class AddPostForm(forms.ModelForm):
+    tags = TagField(label='Теги', required=False, widget=forms.TextInput(attrs={'class': 'form-input'}))
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['cat'].empty_label = "Категорія не обрана"
 
     class Meta:
         model = Blog
-        fields = ['title', 'slug', 'content', 'photo', 'status', 'cat']
+        fields = ['title', 'slug', 'content', 'photo', 'status', 'cat', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
+            'slug': forms.TextInput(attrs={'class': 'form-input'}),
             'content': forms.Textarea(attrs={'cols': 60, 'rows': 10}),
+            'photo': forms.FileInput(attrs={'class': 'form-input'}),
+            'status': forms.Select(attrs={'class': 'form-input'}),
         }
 
     def clean_title(self):
@@ -21,7 +27,7 @@ class AddPostForm(forms.ModelForm):
         if len(title) > 200:
             raise forms.ValidationError('Довжина перевищує 200 символів')
         return title
-
+    
 class RegisterUserForm(UserCreationForm):
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-input'}))
     first_name = forms.CharField(label="Ім'я", widget=forms.TextInput(attrs={'class': 'form-input'}))

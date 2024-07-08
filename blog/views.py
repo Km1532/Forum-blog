@@ -20,6 +20,7 @@ from django.contrib.auth import login
 from .forms import *
 from django.utils.text import slugify
 from .models import Blog, Draft  
+from taggit.models import Tag  
 
 class BlogHome(ListView):
     model = Blog
@@ -45,15 +46,21 @@ def about(request):
     return render(request, 'about.html', {'page_obj': page_obj, 'menu': menu(request), 'title': 'Про сайт'})
 
 
-class AddPage(LoginRequiredMixin, CreateView):
+class AddPage(CreateView):
+    model = Blog
     form_class = AddPostForm
     template_name = 'addpage.html'
-    login_url = reverse_lazy('login')
+    success_url = reverse_lazy('home') 
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        form.instance.status = 'draft'
-        return super().form_valid(form)
+        if 'save_draft' in self.request.POST:
+            form.instance.status = 'draft'
+        else:
+            form.instance.status = 'published'
+        response = super().form_valid(form)
+        self.object.tags.set(*self.request.POST.get('tags', '').split(','))  
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,7 +69,7 @@ class AddPage(LoginRequiredMixin, CreateView):
             context['drafts'] = user_drafts
         context['title'] = 'Додати сторінку'
         return context
-
+    
 @login_required
 def save_draft(request, pk=None):
     if pk:
@@ -76,10 +83,6 @@ def save_draft(request, pk=None):
             draft = form.save(commit=False)
             draft.author = request.user
             draft.status = 'draft'
-            
-            if not draft.slug:
-                draft.slug = generate_unique_slug(draft.title)
-            
             draft.save()
             return redirect('drafts')  
 
@@ -164,8 +167,9 @@ class ShowPost(DetailView):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.comments.select_related('user')
         context['form'] = CommentForm()
+        context['tags'] = self.object.tags.all() 
         return context
-
+    
 class WomenCategory(ListView):
     model = Blog
     template_name = 'index.html'
@@ -386,20 +390,36 @@ def edit_draft(request, pk):
         if form.is_valid():
             draft = form.save(commit=False)
             draft.author = request.user
+            draft.status = 'published'
             draft.save()
-            return redirect('drafts')  # Перенаправлення на сторінку з усіма чернетками
+            return redirect('drafts')
         else:
-            # Вивести на консоль помилки валідації форми, якщо вони є
             print(form.errors)
     else:
         form = AddPostForm(instance=draft)
 
-    return render(request, 'edit_draft.html', {'form': form, 'draft': draft})   
+    return render(request, 'edit_draft.html', {'form': form, 'draft': draft})
 
 @login_required
 def delete_draft(request, pk):
     draft = get_object_or_404(Blog, pk=pk, status='draft', author=request.user)
     if request.method == 'POST':
         draft.delete()
-        return redirect('drafts')
+        return redirect('drafts')  
     return render(request, 'delete_draft.html', {'draft': draft, 'title': 'Видалити чернетку'})
+
+
+class PostsByTag(ListView):
+    model = Blog
+    template_name = 'index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_queryset(self):
+        return Blog.objects.filter(tags__slug=self.kwargs['tag_slug'], status='published').select_related('cat')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f"Пости з тегом '{self.kwargs['tag_slug']}'"
+        context.update(menu(self.request))
+        return context

@@ -10,7 +10,6 @@
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Additional custom styles */
         .list-group-item {
             border: none;
             cursor: pointer;
@@ -19,7 +18,7 @@
         }
         
         .list-group-item:hover {
-            background-color: #f8f9fa; /* Bootstrap's default background for hover state */
+            background-color: #f8f9fa; 
         }
         
         .list-group-item a {
@@ -28,21 +27,21 @@
         }
         
         .list-group-item.selected, .btn-secondary.selected {
-            background-color: #0d6efd; /* Bootstrap's primary color */
-            color: #fff; /* White text on primary background */
+            background-color: #0d6efd; 
+            color: #fff;
             font-weight: bold;
         }
         
         .btn-secondary {
             background-color: transparent;
             border: none;
-            color: #6c757d; /* Bootstrap's secondary color */
-            padding: 0.5rem 1rem; /* Adjust padding to match other list items */
-            margin-bottom: 0.5rem; /* Adjust margin to match other list items */
+            color: #6c757d; 
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.5rem;
         }
         
         .btn-secondary:hover {
-            background-color: #f8f9fa; /* Bootstrap's default background for hover state */
+            background-color: #f8f9fa; 
         }
     </style>
 </head>
@@ -89,9 +88,11 @@
                                 {% endif %}
                             {% endfor %}
                             
-                            <li class="list-group-item">
-                                <a href="{% url 'drafts' %}" class="btn btn-secondary{% if cat_selected == 'drafts' %} selected{% endif %}">Переглянути чернетки</a>
-                            </li>
+                            {% if request.user.is_authenticated %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'drafts' %}" class="btn btn-secondary{% if cat_selected == 'drafts' %} selected{% endif %}">Переглянути чернетки</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </td>
                     <td valign="top" class="content">

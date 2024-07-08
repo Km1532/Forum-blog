@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from blog.views import pageNotFound, save_draft
+from .views import PostsByTag  
 
 urlpatterns = [
     path('', views.BlogHome.as_view(), name='home'),
@@ -28,12 +29,12 @@ urlpatterns = [
     path('post/<slug:post_slug>/dislike/', views.toggle_dislike, name='toggle_dislike'),
     path('post/<slug:post_slug>/comment/<int:comment_id>/like/', views.toggle_comment_like, name='toggle_comment_like'),
     path('post/<slug:post_slug>/comment/<int:comment_id>/dislike/', views.toggle_comment_dislike, name='toggle_comment_dislike'),
-    path('drafts/', views.drafts, name='drafts'),
-    path('draft/<int:pk>/delete/', views.delete_draft, name='delete_draft'),  
-    path('save_draft/', views.save_draft, name='save_draft'),
-    path('draft/<int:pk>/edit/', views.edit_draft, name='edit_draft'),
     path('post/<int:pk>/', views.ShowPost.as_view(), name='post_detail'),
+    path('drafts/', views.drafts, name='drafts'),
+    path('draft/<int:pk>/delete/', views.delete_draft, name='delete_draft'),
     path('draft/<int:pk>/edit/', views.edit_draft, name='edit_draft'),
+    path('save_draft/', views.save_draft, name='save_draft'),
+    path('tag/<slug:tag_slug>/', PostsByTag.as_view(), name='posts_by_tag'),  
 ]
 
 handler404 = 'blog.views.pageNotFound'
