@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>List of Categories</h1>
+
+    <ul>
+        {% if cats %}
+            {% for c in cats %}
+                <li><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+            {% endfor %}
+        {% else %}
+            <li>No categories available.</li>
+        {% endif %}
+    </ul>
+
+    <a href="{% url 'category_add' %}" class="btn btn-primary">Add Category</a>
+{% endblock %}

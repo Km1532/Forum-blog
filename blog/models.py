@@ -5,8 +5,6 @@ from django.urls import reverse
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.text import slugify
-from django.urls import reverse
-from django.conf import settings
 from taggit.managers import TaggableManager
 
 class CustomUser(AbstractUser):
@@ -28,7 +26,6 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
     def __str__(self):
         return f'Профіль користувача {self.user.username}'
@@ -36,7 +33,7 @@ class Profile(models.Model):
 class Blog(models.Model):
     DRAFT = 'draft'
     PUBLISHED = 'published'
-    
+
     STATUS_CHOICES = [
         (DRAFT, 'Чернетка'),
         (PUBLISHED, 'Опублікована'),
@@ -53,7 +50,7 @@ class Blog(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts', verbose_name="Автор", null=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True, verbose_name="Лайки", through='PostLike')
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_posts', blank=True, verbose_name="Дизлайки", through='PostDislike')
-    tags = TaggableManager()  
+    tags = TaggableManager()
 
     def __str__(self):
         return self.title
@@ -100,6 +97,7 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Користувач")
     content = models.TextField(verbose_name="Коментар")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Час створення")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Час оновлення")  # New field
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comments', blank=True, verbose_name="Лайки", through='CommentLike')
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_comments', blank=True, verbose_name="Дизлайки", through='CommentDislike')
 
@@ -141,7 +139,7 @@ class Category(models.Model):
         verbose_name = 'Категорія'
         verbose_name_plural = 'Категорії'
         ordering = ['id']
-
+        
 class Draft(models.Model):
     DRAFT = 'draft'
     PUBLISHED = 'published'
@@ -158,8 +156,12 @@ class Draft(models.Model):
     photo = models.ImageField(upload_to='drafts/photos/', blank=True, null=True)
     cat = models.ForeignKey(Category, on_delete=models.PROTECT, verbose_name="Категорія", blank=True, null=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(self.title)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
