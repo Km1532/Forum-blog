@@ -10,131 +10,236 @@
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            flex: 1;
+        }
+
+        .footer {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            background-color: #000;
+        }
+
+        .footer .text-muted {
+            color: #fff !important;
+        }
+
+        .navbar-light {
+            background-color: #000 !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: #555 !important;
+        }
+
         .dropdown-menu {
             display: none;
             position: absolute;
-            background-color: #f8f9fa;
+            background-color: #f8f9fa !important;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             z-index: 1;
         }
 
         .dropdown-menu a {
-            color: #333;
+            color: #333 !important;
             padding: 0.5rem 1rem;
             display: block;
             text-decoration: none;
         }
 
         .dropdown-menu a:hover {
-            background-color: #ddd;
+            background-color: #ddd !important;
         }
 
         .dropdown:hover .dropdown-menu {
             display: block;
         }
+
+        .content-text {
+            padding: 20px;
+        }
+
+        .pagination .page-item .page-link {
+            color: #333;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #ddd;
+            border-color: #ddd;
+        }
+
+        .list-group {
+            border: none;
+            padding-left: 0;
+        }
+
+        .list-group-item {
+            border: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .list-group-header {
+            margin-left: 0; /* Встановлюємо від'ємний відступ для переміщення тексту вліво */
+            font-weight: bold;
+            border: none !important;
+            background-color: #f8f9fa !important;
+            color: #333;
+            text-align: left;
+            width: 100%;
+            font-size: 1.5rem; /* Збільшуємо розмір тексту */
+        }
+
+        .list-group-item a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .list-group-item a:hover {
+            color: #000;
+        }
+
+        .navbar-nav .nav-link + .nav-link::before {
+            content: "|";
+            margin: 0 10px;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
-<table class="table-page" border="0" cellpadding="0" cellspacing="0">
-    <tr>
-        <td valign="top">
-            {% block mainmenu %}
-            <div class="header">
-                <ul id="mainmenu" class="mainmenu">
-                    <li class="logo"><a href="{% url 'home' %}"><i class="bi bi-bootstrap"></i></a></li>
-                    <li><a href="{% url 'about' %}">Про сайт</a></li>
-                    <li><a href="{% url 'contact' %}">Зворотній зв'язок</a></li>
-                    <li class="dropdown">
-                        <a href="{% url 'add_page' %}">Додати статтю</a>
-                        <div class="dropdown-menu">
-                            <a href="{% url 'category_list' %}">Переглянути категорії</a>
-                            {% if request.user.is_staff %}
-                            <a href="{% url 'category_add' %}">Додати категорію</a>
-                            {% endif %}
-                            <a href="{% url 'drafts' %}">Переглянути чернетки</a>
-                        </div>
-                    </li>
-                    <li class="last">
-                        {% if request.user.is_authenticated %}
-                            <a href="{% url 'user_profile' request.user.username %}">{{ request.user.username }}</a> | <a href="{% url 'logout' %}">Вийти</a>
-                        {% else %}
-                            <a href="{% url 'register' %}">Реєстрація</a> | <a href="{% url 'login' %}">Увійти</a>
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="bi bi-bootstrap" style="color: #fff;"></i>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon" style="color: #fff;"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">Про сайт</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">Зворотній зв'язок</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Додати статтю
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'category_list' %}">Переглянути категорії</a></li>
+                        {% if request.user.is_staff %}
+                        <li><a class="dropdown-item" href="{% url 'category_add' %}">Додати категорію</a></li>
                         {% endif %}
+                        <li><a class="dropdown-item" href="{% url 'drafts' %}">Переглянути чернетки</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_profile' request.user.username %}">{{ request.user.username }}</a>
                     </li>
-                </ul>
-                <div class="clear"></div>
-            </div>
-            {% endblock mainmenu %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Вийти</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Реєстрація</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Увійти</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container content-wrapper">
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="list-group">
+                {% if cat_selected == 0 %}
+                    <li class="list-group-item list-group-header">Усі категорії</li>
+                {% else %}
+                    <li class="list-group-item"><a href="{% url 'home' %}">Усі категорії</a></li>
+                {% endif %}
+
+                {% for c in cats %}
+                    {% if c.num_posts > 0 %}
+                        {% if c.pk == cat_selected %}
+                            <li class="list-group-item active">{{ c.name }}</li>
+                        {% else %}
+                            <li class="list-group-item"><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-10">
+            {% block breadcrumbs %}
+            {% endblock %}
             
-            <table class="table-content" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td valign="top" class="left-chapters">
-                        <ul id="leftchapters">
-                            {% if cat_selected == 0 %}
-                                <li class="selected">Усі категорії</li>
-                            {% else %}
-                                <li><a href="{% url 'home' %}">Усі категорії</a></li>
-                            {% endif %}
-                            
-                            {% for c in cats %}
-                                {% if c.num_posts > 0 %}
-                                    {% if c.pk == cat_selected %}
-                                        <li class="selected">{{ c.name }}</li>
-                                    {% else %}
-                                        <li><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td valign="top" class="content">
-                        {% block breadcrumbs %}
-                        {% endblock %}
+            <div class="content-text">
+                {% block content %}
+                {% endblock %}
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
                         
-                        <div class="content-text">
-                            {% block content %}
-                            {% endblock %}
-                            {% if page_obj.has_other_pages %}
-                            <nav class="list-pages">
-                                <ul>
-                                    {% if page_obj.has_previous %}
-                                    <li class="page-num">
-                                        <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
-                                    </li>
-                                    {% endif %}
-                                    
-                                    {% for p in paginator.page_range %}
-                                        {% if page_obj.number == p %}
-                                        <li class="page-num page-num-selected">{{ p }}</li>
-                                        {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
-                                        <li class="page-num">
-                                            <a href="?page={{ p }}">{{ p }}</a>
-                                        </li>
-                                        {% endif %}
-                                    {% endfor %}
-                                    
-                                    {% if page_obj.has_next %}
-                                    <li class="page-num">
-                                        <a href="?page={{ page_obj.next_page_number }}">&gt;</a>
-                                    </li>
-                                    {% endif %}
-                                </ul>
-                            </nav>
+                        {% for p in paginator.page_range %}
+                            {% if page_obj.number == p %}
+                            <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                            {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+                            <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
                             {% endif %}
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td valign="bottom">
-            <div id="footer" style="text-align: center; padding: 20px 0;">
-                <p class="footer-text">&copy; Sandy Team</p>
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
             </div>
-        </td>
-    </tr>
-</table>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">&copy; Sandy Team</span>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
