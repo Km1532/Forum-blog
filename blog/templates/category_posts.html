@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ category.name }}</h2>
+<ul>
+    {% for post in posts %}
+        <li>
+            <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+        </li>
+    {% empty %}
+        <li>Немає постів у цій категорії.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'category_list' %}">Назад до списку категорій</a>
+{% endblock %}

@@ -161,7 +161,7 @@ class Draft(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(self.title)
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)   
 
     def __str__(self):
         return self.title
@@ -180,3 +180,13 @@ class Tag(models.Model):
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
         ordering = ['id']
+
+class Post(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

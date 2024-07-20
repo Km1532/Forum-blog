@@ -19,12 +19,13 @@ from django.contrib.auth import logout
 from django.contrib.auth import login
 from .forms import *
 from django.utils.text import slugify
-from .models import Blog, Draft  
+from .models import Blog, Draft,Post  
 from taggit.models import Tag  
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from .forms import CategoryForm 
-
+from django.contrib.auth.decorators import user_passes_test
+from .models import Category, Blog
 
 class BlogHome(ListView):
         model = Blog
@@ -214,13 +215,17 @@ def edit_comment(request, post_slug, comment_id):
             form = CommentForm(instance=comment)
         return render(request, 'edit_comment.html', {'form': form, 'post': comment.post})
 
+def is_author_or_admin(user):
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
+
+@user_passes_test(is_author_or_admin)
 @login_required
 def delete_comment(request, post_slug, comment_id):
-        comment = get_object_or_404(Comment, id=comment_id, post__slug=post_slug, user=request.user)
-        if request.method == 'POST':
-            comment.delete()
-            return redirect(comment.post.get_absolute_url())
-        return render(request, 'delete_comment.html', {'comment': comment})
+    comment = get_object_or_404(Comment, id=comment_id, post__slug=post_slug)
+    if request.method == 'POST':
+        comment.delete()
+        return redirect(comment.post.get_absolute_url())
+    return render(request, 'delete_comment.html', {'comment': comment})
 
 @login_required
 def soon_page(request):
@@ -392,8 +397,7 @@ def edit_draft(request, pk):
         if request.method == 'POST':
             form = AddPostForm(request.POST, request.FILES, instance=draft)
             if form.is_valid():
-                draft = form.save(commit=False)
-                draft.author = request.user
+                draft = form.save()
                 draft.status = 'published'
                 draft.save()
                 return redirect('drafts')
@@ -480,3 +484,16 @@ def manage_tags(request):
             form = TagForm()
 
         return render(request, 'manage_tags.html', {'form': form})
+
+def generate_unique_slug(title):
+    slug = slugify(title)
+    counter = 1
+    while Blog.objects.filter(slug=slug).exists():
+        slug = f'{slug}-{counter}'
+        counter += 1
+    return slug
+
+def category_posts(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    posts = Post.objects.filter(category=category)
+    return render(request, 'category_posts.html', {'category': category, 'posts': posts})

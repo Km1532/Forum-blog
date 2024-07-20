@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Додати категорію</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">
+        {% if form.instance.pk %}Редагувати{% else %}Додати{% endif %} категорію
+    </h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="mb-3">
+            {{ form.as_p|safe }}
+        </div>
         <button type="submit" class="btn btn-primary">Зберегти</button>
     </form>
+    <a href="{% url 'category_list' %}" class="btn btn-secondary mt-3">Назад до списку категорій</a>
+</div>
 {% endblock %}

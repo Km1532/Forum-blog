@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from blog.views import pageNotFound, save_draft
-from .views import PostsByTag,   CategoryListView,CategoryCreateView,CategoryUpdateView,CategoryDeleteView,manage_tags
+from .views import PostsByTag,category_posts,CategoryListView,CategoryCreateView,CategoryUpdateView,CategoryDeleteView,manage_tags
 
 urlpatterns = [
     path('', views.BlogHome.as_view(), name='home'),
@@ -33,10 +33,10 @@ urlpatterns = [
     path('drafts/', views.drafts, name='drafts'),
     path('draft/<int:pk>/delete/', views.delete_draft, name='delete_draft'),
     path('draft/<int:pk>/edit/', views.edit_draft, name='edit_draft'),
-    path('save_draft/', views.save_draft, name='save_draft'),
+    path('save_draft/', views.save_draft, name='save_dфraft'),
     path('tag/<slug:tag_slug>/', PostsByTag.as_view(), name='posts_by_tag'),  
-
-      path('categories/', CategoryListView.as_view(), name='category_list'),
+    path('category/<int:pk>/posts/', category_posts, name='category_posts'),
+    path('categories/', CategoryListView.as_view(), name='category_list'),
     path('categories/add/', CategoryCreateView.as_view(), name='category_add'),
     path('categories/<int:pk>/edit/', CategoryUpdateView.as_view(), name='category_edit'),
     path('categories/<int:pk>/delete/', CategoryDeleteView.as_view(), name='category_delete'),
