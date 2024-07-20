@@ -4,12 +4,17 @@
 <h2>Категорії</h2>
 <ul>
     {% for category in categories %}
-        <li>{{ category.name }} - 
-            <a href="{% url 'category_edit' category.pk %}">Редагувати</a> - 
-            <a href="{% url 'category_delete' category.pk %}">Видалити</a> - 
-            <a href="{% url 'category_posts' category.pk %}">Переглянути пости</a>
+        <li>{{ category.name }}
+            {% if user.is_staff %}
+                - <a href="{% url 'category_edit' category.pk %}">Редагувати</a>
+                - <a href="{% url 'category_delete' category.pk %}">Видалити</a>
+            {% endif %}
+            - <a href="{% url 'category_posts' category.pk %}">Переглянути пости</a>
         </li>
     {% endfor %}
 </ul>
-<a href="{% url 'category_add' %}">Додати нову категорію</a>
+
+{% if user.is_staff %}
+    <a href="{% url 'category_add' %}">Додати нову категорію</a>
+{% endif %}
 {% endblock %}

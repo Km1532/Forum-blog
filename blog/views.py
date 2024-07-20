@@ -163,12 +163,12 @@ def logout_user(request):
         return redirect('login')
 
 class ShowPost(DetailView):
-        model = Blog
-        template_name = 'post.html'
-        slug_url_kwarg = 'post_slug'
-        context_object_name = 'post'
+    model = Blog
+    template_name = 'post.html'
+    slug_url_kwarg = 'post_slug'  
+    context_object_name = 'post'
 
-        def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):
             context = super().get_context_data(**kwargs)
             context['comments'] = self.object.comments.select_related('user')
             context['form'] = CommentForm()
@@ -216,7 +216,7 @@ def edit_comment(request, post_slug, comment_id):
         return render(request, 'edit_comment.html', {'form': form, 'post': comment.post})
 
 def is_author_or_admin(user):
-    return user.is_authenticated and (user.is_staff or user.is_superuser)
+    return user.is_authenticated and (user.is_staff or user.is_author)
 
 @user_passes_test(is_author_or_admin)
 @login_required
@@ -446,7 +446,6 @@ def delete_comment(request, post_slug, comment_id):
         return render(request, 'delete_comment.html', {'comment': comment})
 
 
-@method_decorator(staff_member_required, name='dispatch')
 class CategoryListView(ListView):
     model = Category
     template_name = 'list_categories.html'
@@ -495,5 +494,5 @@ def generate_unique_slug(title):
 
 def category_posts(request, pk):
     category = get_object_or_404(Category, pk=pk)
-    posts = Post.objects.filter(category=category)
+    posts = Blog.objects.filter(cat=category, status='published')  
     return render(request, 'category_posts.html', {'category': category, 'posts': posts})

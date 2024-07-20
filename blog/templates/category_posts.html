@@ -5,7 +5,7 @@
 <ul>
     {% for post in posts %}
         <li>
-            <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+            <a href="{% url 'post' post.slug %}">{{ post.title }}</a>
         </li>
     {% empty %}
         <li>Немає постів у цій категорії.</li>
