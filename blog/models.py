@@ -97,7 +97,7 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Користувач")
     content = models.TextField(verbose_name="Коментар")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Час створення")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Час оновлення")  # New field
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Час оновлення")  
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_comments', blank=True, verbose_name="Лайки", through='CommentLike')
     dislikes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_comments', blank=True, verbose_name="Дизлайки", through='CommentDislike')
 

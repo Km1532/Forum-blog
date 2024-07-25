@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .btn-custom {
+        background-color: black;
+        color: white;
+        border: none;
+    }
+
+    .btn-custom:hover {
+        background-color: #333;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-9">
+        <h1>{% if form.instance.pk %}Редагувати Чернетку{% else %}Створити Чернетку{% endif %}</h1>
+
+        <form action="{% url 'save_draft' pk=form.instance.pk %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-error">{{ form.non_field_errors }}</div>
+            {% for field in form %}
+                <p>
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                    {{ field }}
+                </p>
+                <div class="form-error">{{ field.errors }}</div>
+            {% endfor %}
+            <button type="submit" class="btn btn-secondary btn-custom">Зберегти як чернетку</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

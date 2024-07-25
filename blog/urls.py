@@ -3,7 +3,6 @@ from . import views
 from blog.views import pageNotFound, save_draft
 from .views import PostsByTag,category_posts,CategoryListView,CategoryCreateView,CategoryUpdateView,CategoryDeleteView,manage_tags
 
-
 urlpatterns = [
     path('', views.BlogHome.as_view(), name='home'),
     path('about/', views.about, name='about'),
@@ -13,7 +12,7 @@ urlpatterns = [
     path('login/', views.LoginUser.as_view(), name='login'),
     path('logout/', views.logout_user, name='logout'),
     path('register/', views.RegisterUser.as_view(), name='register'),
-    path('post/<slug:post_slug>/', views.ShowPost.as_view(), name='post'), 
+    path('post/<slug:post_slug>/', views.ShowPost.as_view(), name='post'),
     path('post/<slug:post_slug>/edit/', views.edit_post, name='edit_post'),
     path('post/<slug:post_slug>/delete/', views.delete_post, name='delete_post'),
     path('category/<slug:cat_slug>/', views.WomenCategory.as_view(), name='category'),

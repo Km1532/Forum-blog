@@ -77,22 +77,22 @@ class AddPage(CreateView):
         
 @login_required
 def save_draft(request, pk=None):
-        if pk:
-            draft = get_object_or_404(Blog, pk=pk, author=request.user, status='draft')
-            form = AddPostForm(request.POST or None, request.FILES or None, instance=draft)
-        else:
-            form = AddPostForm(request.POST or None, request.FILES or None)
+    if pk:
+        draft = get_object_or_404(Blog, pk=pk, author=request.user, status='draft')
+        form = AddPostForm(request.POST or None, request.FILES or None, instance=draft)
+    else:
+        form = AddPostForm(request.POST or None, request.FILES or None)
 
-        if request.method == 'POST':
-            if form.is_valid():
-                draft = form.save(commit=False)
-                draft.author = request.user
-                draft.status = 'draft'
-                draft.save()
-                return redirect('drafts')  
+    if request.method == 'POST':
+        if form.is_valid():
+            draft = form.save(commit=False)
+            draft.author = request.user
+            draft.status = 'draft'
+            draft.save()
+            return redirect('drafts')
 
-        user_drafts = Blog.objects.filter(author=request.user, status='draft')
-        return render(request, 'drafts.html', {'form': form, 'drafts': user_drafts, 'title': 'Чернетки'})
+    user_drafts = Blog.objects.filter(author=request.user, status='draft')
+    return render(request, 'drafts.html', {'form': form, 'drafts': user_drafts, 'title': 'Чернетки'})
     
 
 def generate_unique_slug(title):

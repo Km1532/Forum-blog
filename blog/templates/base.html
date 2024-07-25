@@ -140,10 +140,11 @@
                     <a class="nav-link" href="{% url 'contact' %}">Зворотній зв'язок</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="{% url 'add_page' %}" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Додати статтю
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'add_page' %}">Додати статтю</a></li>
                         <li><a class="dropdown-item" href="{% url 'category_list' %}">Переглянути категорії</a></li>
                         {% if request.user.is_staff %}
                         <li><a class="dropdown-item" href="{% url 'category_add' %}">Додати категорію</a></li>
@@ -241,6 +242,7 @@
     </div>
 </footer>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRJ8U5G5F5rL5tvlk5c5O1zM4E5y4z7V5dM2+0fj4" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

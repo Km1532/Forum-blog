@@ -3,29 +3,37 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Редагування профілю</h1>
+    <h1 class="mb-4">Редагування профілю</h1>
     <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="id_username" class="form-label">Ім'я користувача:</label>
-            {{ form.username }}
-            <div class="form-text">Обов'язкове поле. Не більше 150 символів. Тільки букви, цифри і символи @/./+/-/_.</div>
-        </div>
-        <div class="mb-3">
-            <label for="id_first_name" class="form-label">Ім'я:</label>
-            {{ form.first_name }}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="id_username" class="form-label">Ім'я користувача:</label>
+                <input type="text" name="username" id="id_username" class="form-control" value="{{ form.username.value }}">
+                <div class="form-text">Обов'язкове поле. Не більше 150 символів. Тільки букви, цифри і символи @/./+/-/_.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="id_first_name" class="form-label">Ім'я:</label>
+                <input type="text" name="first_name" id="id_first_name" class="form-control" value="{{ form.first_name.value }}">
+            </div>
         </div>
         <div class="mb-3">
             <label for="id_last_name" class="form-label">Прізвище:</label>
-            {{ form.last_name }}
+            <input type="text" name="last_name" id="id_last_name" class="form-control" value="{{ form.last_name.value }}">
         </div>
         <div class="mb-3">
             <label for="id_email" class="form-label">Адреса електронної пошти:</label>
-            {{ form.email }}
+            <input type="email" name="email" id="id_email" class="form-control" value="{{ form.email.value }}">
         </div>
         <div class="mb-3">
             <label for="id_avatar" class="form-label">Аватар:</label>
-            {{ form.avatar }}
+            {% if form.avatar.value %}
+                <div class="mb-3">
+                    <img src="{{ form.avatar.value.url }}" alt="Current Avatar" class="img-thumbnail" width="100">
+                </div>
+            {% endif %}
+            <input type="file" name="avatar" id="id_avatar" class="form-control">
+            <div class="form-text">Оберіть нове зображення для аватара або залиште порожнім, щоб не змінювати.</div>
         </div>
         <button type="submit" class="btn btn-primary">Зберегти</button>
     </form>
