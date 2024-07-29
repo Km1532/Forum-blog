@@ -39,6 +39,10 @@ urlpatterns = [
     path('categories/<int:pk>/delete/', CategoryDeleteView.as_view(), name='category_delete'),
     path('category/<int:pk>/posts/', category_posts, name='category_posts'),
     path('manage_tags/', manage_tags, name='manage_tags'),
+    path('announcements/', views.AnnouncementsView.as_view(), name='announcements'),
+    path('add_announcement/', views.add_announcement, name='add_announcement'),
+    path('edit_announcement/<int:pk>/', views.edit_announcement, name='edit_announcement'),
+    path('delete_announcement/<int:pk>/', views.delete_announcement, name='delete_announcement'),
 ]
 
 handler404 = 'blog.views.pageNotFound'

@@ -73,7 +73,7 @@ class ContactViewTest(TestCase):
             'cc_myself': True
         }
         response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 302)  # Expecting a redirect after successful form submission
+        self.assertEqual(response.status_code, 302)  
         self.assertRedirects(response, reverse('contact'))
 
     def test_post_invalid_contact_form(self):
@@ -109,7 +109,7 @@ class EditProfileViewTest(TestCase):
             'email': 'newemail@example.com',
         }
         response = self.client.post(self.url, data)
-        self.assertEqual(response.status_code, 302)  # Expecting a redirect after successful form submission
+        self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
         self.assertEqual(self.user.username, 'newusername')
         self.assertEqual(self.user.email, 'newemail@example.com')

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Редагувати оголошення</h1>
+    <form action="{% url 'edit_announcement' form.instance.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Зберегти
+        </button>
+    </form>
+{% endblock %}

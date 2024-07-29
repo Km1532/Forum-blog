@@ -1,54 +1,102 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-3">
-    </div>
-    <div class="col-md-9">
-        <h1>{{ title }}</h1>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Можливо тут буде якийсь бічний контент -->
+        </div>
+        <div class="col-md-9">
+            <h1>{{ title }}</h1>
 
-        <form action="{% url 'add_page' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+            <form action="{% url 'add_page' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
 
-            <div class="form-error">{{ form.non_field_errors }}</div>
+                <div class="alert alert-danger d-none" id="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
 
-            <p><label class="form-label" for="{{ form.title.id_for_label }}">{{ form.title.label }}:</label> {{ form.title }}</p>
-            <div class="form-error">{{ form.title.errors }}</div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.title.id_for_label }}">
+                        <i class="fa fa-pencil-alt me-2"></i>{{ form.title.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.title }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.title.errors }}</div>
+                </div>
 
-            <p><label class="form-label" for="{{ form.slug.id_for_label }}">{{ form.slug.label }}:</label> {{ form.slug }}</p>
-            <div class="form-error">{{ form.slug.errors }}</div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.slug.id_for_label }}">
+                        <i class="fa fa-link me-2"></i>{{ form.slug.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.slug }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.slug.errors }}</div>
+                </div>
 
-            <p><label class="form-label" for="{{ form.content.id_for_label }}">{{ form.content.label }}:</label> {{ form.content }}</p>
-            <div class="form-error">{{ form.content.errors }}</div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.content.id_for_label }}">
+                        <i class="fa fa-file-alt me-2"></i>{{ form.content.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.content }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.content.errors }}</div>
+                </div>
 
-            <p><label class="form-label" for="{{ form.photo.id_for_label }}">{{ form.photo.label }}:</label> {{ form.photo }}</p>
-            <div class="form-error">{{ form.photo.errors }}</div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.photo.id_for_label }}">
+                        <i class="fa fa-image me-2"></i>{{ form.photo.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.photo }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.photo.errors }}</div>
+                </div>
 
-            <p><label class="form-label" for="{{ form.status.id_for_label }}">{{ form.status.label }}:</label> {{ form.status }}</p>
-            <div class="form-error">{{ form.status.errors }}</div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.status.id_for_label }}">
+                        <i class="fa fa-tags me-2"></i>{{ form.status.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.status }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.status.errors }}</div>
+                </div>
 
-            <div class="mb-4">
-                <label class="form-label" for="{{ form.tags.id_for_label }}">{{ form.tags.label }}:</label>
-                {{ form.tags }}
-                <div class="form-error">{{ form.tags.errors }}</div>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.tags.id_for_label }}">
+                        <i class="fa fa-tag me-2"></i>{{ form.tags.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.tags }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.tags.errors }}</div>
+                </div>
 
-            <div class="mb-4">
-                <label class="form-label" for="{{ form.cat.id_for_label }}">{{ form.cat.label }}:</label>
-                {{ form.cat }}
-                <div class="form-error">{{ form.cat.errors }}</div>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.cat.id_for_label }}">
+                        <i class="fa fa-list me-2"></i>{{ form.cat.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.cat }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.cat.errors }}</div>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Додати</button>
-        </form>
+                <button type="submit" class="btn btn-primary">Додати</button>
+            </form>
 
-        {% if is_draft %}
-        <form action="{% url 'save_draft' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="hidden" name="is_draft" value="True">
-            <button type="submit" class="btn btn-secondary">Зберегти як чернетку</button>
-        </form>
-        {% endif %}
+            {% if is_draft %}
+            <form action="{% url 'save_draft' %}" method="post" enctype="multipart/form-data" class="mt-4">
+                {% csrf_token %}
+                <input type="hidden" name="is_draft" value="True">
+                <button type="submit" class="btn btn-secondary">Зберегти як чернетку</button>
+            </form>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

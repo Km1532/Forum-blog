@@ -26,6 +26,10 @@ from django.utils.decorators import method_decorator
 from .forms import CategoryForm 
 from django.contrib.auth.decorators import user_passes_test
 from .models import Category, Blog
+from .models import Announcement  
+
+
+
 
 class BlogHome(ListView):
         model = Blog
@@ -496,3 +500,38 @@ def category_posts(request, pk):
     category = get_object_or_404(Category, pk=pk)
     posts = Blog.objects.filter(cat=category, status='published')  
     return render(request, 'category_posts.html', {'category': category, 'posts': posts})
+
+class AnnouncementsView(ListView):
+    model = Announcement
+    template_name = 'announcements.html'
+    context_object_name = 'announcements'
+
+def edit_announcement(request, pk):
+    announcement = get_object_or_404(Announcement, pk=pk)
+    if request.method == 'POST':
+        form = AddAnnouncementForm(request.POST, request.FILES, instance=announcement)
+        if form.is_valid():
+            form.save()
+            return redirect('announcements')
+    else:
+        form = AddAnnouncementForm(instance=announcement)
+    return render(request, 'edit_announcement.html', {'form': form})
+
+@login_required
+def add_announcement(request):
+    if request.method == 'POST':
+        form = AddAnnouncementForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('announcements')
+    else:
+        form = AddAnnouncementForm()
+    
+    return render(request, 'add_announcement.html', {'form': form})
+
+def delete_announcement(request, pk):
+    announcement = get_object_or_404(Announcement, pk=pk)
+    if request.method == 'POST':
+        announcement.delete()
+        return redirect('announcements')
+    return render(request, 'confirm_delete.html', {'announcement': announcement})

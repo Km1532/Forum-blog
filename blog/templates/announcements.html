@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Оголошення</h1>
+    <ul class="list-group">
+        {% for announcement in announcements %}
+            <li class="list-group-item">
+                <div class="d-flex flex-column">
+                    <strong>{{ announcement.title }}</strong>
+                    <p>{{ announcement.content }}</p>
+                    {% if request.user.is_staff %}
+                        <div class="mt-2">
+                            <a href="{% url 'edit_announcement' announcement.id %}" class="btn btn-warning btn-sm me-2">
+                                <i class="bi bi-pencil"></i> Редагувати
+                            </a>
+                            <form action="{% url 'delete_announcement' announcement.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Видалити
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item">Немає оголошень.</li>
+        {% endfor %}
+    </ul>
+
+    {% if request.user.is_staff %}
+        <hr>
+        <h2>Додати нове оголошення</h2>
+        <form action="{% url 'add_announcement' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label" for="id_title">Назва</label>
+                <input type="text" class="form-control" id="id_title" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="id_content">Зміст</label>
+                <textarea class="form-control" id="id_content" name="content" rows="4" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="id_photo">Фото</label>
+                <input type="file" class="form-control" id="id_photo" name="photo">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Додати
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}

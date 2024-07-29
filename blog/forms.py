@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, User
 from .models import Blog, Comment, CustomUser, Profile, Draft, generate_unique_slug
 from taggit.forms import TagField  
 from django import forms
-from .models import Blog, Comment, CustomUser, Profile, Draft, Category
+from .models import Blog, Comment, CustomUser, Profile, Draft, Category,Announcement
 from taggit.forms import TagField
 
 class AddPostForm(forms.ModelForm):
@@ -98,3 +98,22 @@ class CategoryForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-input'}),
             'slug': forms.TextInput(attrs={'class': 'form-input'}),
         }
+
+
+
+class AddAnnouncementForm(forms.ModelForm):
+
+    class Meta:
+        model = Announcement
+        fields = ['title', 'content', 'photo']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-input'}),
+            'content': forms.Textarea(attrs={'cols': 60, 'rows': 10}),
+            'photo': forms.FileInput(attrs={'class': 'form-input'}),
+        }
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if len(title) > 200:
+            raise forms.ValidationError('Довжина перевищує 200 символів')
+        return title

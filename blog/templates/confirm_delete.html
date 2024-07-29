@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Підтвердження видалення</h1>
+    <p>Ви впевнені, що хочете видалити оголошення "{{ announcement.title }}"?</p>
+    <form action="{% url 'delete_announcement' announcement.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Видалити
+        </button>
+        <a href="{% url 'announcements' %}" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> Скасувати
+        </a>
+    </form>
+{% endblock %}

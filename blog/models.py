@@ -190,3 +190,17 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Заголовок")
+    content = models.TextField(verbose_name="Текст статті")
+    photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name="Фото", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Час створення")
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Оголошення'
+        verbose_name_plural = 'Оголошення'
