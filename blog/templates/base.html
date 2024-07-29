@@ -182,9 +182,9 @@
         <div class="col-md-2">
             <ul class="list-group">
                 {% if cat_selected == 0 %}
-                    <li class="list-group-item list-group-header">Усі категорії</li>
+                    <li class="list-group-item list-group-header">Усі пости</li>
                 {% else %}
-                    <li class="list-group-item"><a href="{% url 'home' %}">Усі категорії</a></li>
+                    <li class="list-group-item"><a href="{% url 'home' %}">Усі пости</a></li>
                 {% endif %}
 
                 {% for c in cats %}
