@@ -32,52 +32,57 @@ from .models import Announcement
 
 
 class BlogHome(ListView):
-        model = Blog
-        template_name = 'index.html'
-        context_object_name = 'posts'
+    model = Blog
+    template_name = 'index.html'
+    context_object_name = 'posts'
 
-        def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            c_def = {'title': "Головна сторінка"}
-            context.update(c_def)
-            context.update(menu(self.request))
-            return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'title': "Головна сторінка",
+            **menu(self.request)
+        })
+        return context
 
-        def get_queryset(self):
-            return Blog.objects.filter(status='published').select_related('cat')
-        
+    def get_queryset(self):
+        return Blog.objects.filter(status='published').select_related('cat').order_by('-time_update')
+
 def about(request):
-        contact_list = Blog.objects.all()
-        paginator = Paginator(contact_list, 3)
+    contact_list = Blog.objects.all()
+    paginator = Paginator(contact_list, 3)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'about.html', {'page_obj': page_obj, 'menu': menu(request), 'title': 'Про сайт'})
 
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        return render(request, 'about.html', {'page_obj': page_obj, 'menu': menu(request), 'title': 'Про сайт'})
+class TagView(DetailView):
+    model = Tag
+    template_name = 'tag_detail.html'
+    context_object_name = 'tag'
 
+class AddPage(LoginRequiredMixin, CreateView):
+    model = Blog
+    form_class = AddPostForm
+    template_name = 'addpage.html'
+    success_url = reverse_lazy('home')
+    login_url = 'login'
 
-class AddPage(CreateView):
-        model = Blog
-        form_class = AddPostForm
-        template_name = 'addpage.html'
-        success_url = reverse_lazy('home') 
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        if 'save_draft' in self.request.POST:
+            form.instance.status = 'draft'
+        else:
+            form.instance.status = 'published'
+        response = super().form_valid(form)
+        self.object.tags.set(*self.request.POST.get('tags', '').split(','))
+        return response
 
-        def form_valid(self, form):
-            form.instance.author = self.request.user
-            if 'save_draft' in self.request.POST:
-                form.instance.status = 'draft'
-            else:
-                form.instance.status = 'published'
-            response = super().form_valid(form)
-            self.object.tags.set(*self.request.POST.get('tags', '').split(','))  
-            return response
-
-        def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            user_drafts = Blog.objects.filter(author=self.request.user, status='draft')
-            if user_drafts.exists():
-                context['drafts'] = user_drafts
-            context['title'] = 'Додати сторінку'
-            return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_drafts = Blog.objects.filter(author=self.request.user, status='draft')
+        context['drafts'] = user_drafts if user_drafts.exists() else None
+        context['title'] = 'Додати сторінку'
+        context.update(menu(self.request))
+        return context
         
 @login_required
 def save_draft(request, pk=None):
@@ -231,9 +236,8 @@ def delete_comment(request, post_slug, comment_id):
         return redirect(comment.post.get_absolute_url())
     return render(request, 'delete_comment.html', {'comment': comment})
 
-@login_required
 def soon_page(request):
-        return render(request, 'soon.html', {'menu': menu(request), 'title': 'Скоро'})
+    return render(request, 'soon.html', {'menu': menu(request), 'title': 'Скоро'})
 
 @login_required
 def profile(request):
@@ -391,8 +395,8 @@ class LoginUser(LoginView):
         
 @login_required
 def drafts(request):
-        user_drafts = Blog.objects.filter(author=request.user, status='draft')
-        return render(request, 'drafts.html', {'drafts': user_drafts, 'title': 'Чернетки'})
+    user_drafts = Blog.objects.filter(author=request.user, status='draft')
+    return render(request, 'drafts.html', {'drafts': user_drafts, 'title': 'Чернетки'})
 
 @login_required
 def edit_draft(request, pk):

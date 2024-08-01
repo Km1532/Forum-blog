@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4">Пости з тегом: {{ tag.name }}</h1>
+    {% for post in posts %}
+        <div class="post-preview">
+            <a href="{% url 'post_detail' post.slug %}">
+                <h2 class="post-title">{{ post.title }}</h2>
+                <h3 class="post-subtitle">{{ post.subtitle }}</h3>
+            </a>
+            <p class="post-meta">Опубліковано {{ post.created_at }} </p>
+        </div>
+        <hr>
+    {% endfor %}
+</div>
+{% endblock %}

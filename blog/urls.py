@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from blog.views import pageNotFound, save_draft
 from .views import PostsByTag,category_posts,CategoryListView,CategoryCreateView,CategoryUpdateView,CategoryDeleteView,manage_tags
+from .views import TagView
 
 urlpatterns = [
     path('', views.BlogHome.as_view(), name='home'),
@@ -43,6 +44,11 @@ urlpatterns = [
     path('add_announcement/', views.add_announcement, name='add_announcement'),
     path('edit_announcement/<int:pk>/', views.edit_announcement, name='edit_announcement'),
     path('delete_announcement/<int:pk>/', views.delete_announcement, name='delete_announcement'),
+    path('tags/<slug:slug>/', TagView.as_view(), name='tag_detail'),
+    path('tags/<str:slug>/', TagView.as_view(), name='tag_detail'),
+
+
 ]
+
 
 handler404 = 'blog.views.pageNotFound'

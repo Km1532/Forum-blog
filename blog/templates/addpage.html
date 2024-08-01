@@ -57,6 +57,16 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label" for="{{ form.video.id_for_label }}">
+                        <i class="fa fa-video me-2"></i>{{ form.video.label }}
+                    </label>
+                    <div class="input-group">
+                        {{ form.video }}
+                    </div>
+                    <div class="form-text text-danger">{{ form.video.errors }}</div>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label" for="{{ form.status.id_for_label }}">
                         <i class="fa fa-tags me-2"></i>{{ form.status.label }}
                     </label>

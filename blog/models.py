@@ -43,6 +43,7 @@ class Blog(models.Model):
     slug = models.SlugField(max_length=255, unique=True, verbose_name="URL")
     content = models.TextField(blank=True, verbose_name="Текст статті")
     photo = models.ImageField(upload_to="photos/%Y/%m/%d/", verbose_name="Фото", blank=True, null=True)
+    video = models.FileField(upload_to='videos/%Y/%m/%d/', verbose_name="Відео", blank=True, null=True)
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Час створення")
     time_update = models.DateTimeField(auto_now=True, verbose_name="Час оновлення")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=DRAFT, verbose_name="Статус")

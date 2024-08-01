@@ -15,12 +15,13 @@ class AddPostForm(forms.ModelForm):
 
     class Meta:
         model = Blog
-        fields = ['title', 'slug', 'content', 'photo', 'status', 'cat', 'tags']
+        fields = ['title', 'slug', 'content', 'photo', 'video', 'status', 'cat', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
             'slug': forms.TextInput(attrs={'class': 'form-input'}),
             'content': forms.Textarea(attrs={'cols': 60, 'rows': 10}),
             'photo': forms.FileInput(attrs={'class': 'form-input'}),
+            'video': forms.FileInput(attrs={'class': 'form-input'}),
             'status': forms.Select(attrs={'class': 'form-input'}),
         }
 

@@ -5,8 +5,12 @@
     <ul class="list-group">
         {% for announcement in announcements %}
             <li class="list-group-item d-flex align-items-start">
+                <!-- Контейнер для картинки -->
+                {% if announcement.photo %}
+                    <img src="{{ announcement.photo.url }}" alt="{{ announcement.title }}" style="max-width: 150px; height: auto; margin-right: 10px;">
+                {% endif %}
                 <!-- Контейнер для тексту оголошення -->
-                <div class="flex-grow-1" style="margin-right: 10px;">
+                <div class="flex-grow-1">
                     <strong>{{ announcement.title }}</strong>
                     <p>{{ announcement.content }}</p>
                     {% if request.user.is_staff %}
@@ -23,10 +27,6 @@
                         </div>
                     {% endif %}
                 </div>
-                <!-- Контейнер для картинки -->
-                {% if announcement.photo %}
-                    <img src="{{ announcement.photo.url }}" alt="{{ announcement.title }}" style="max-width: 150px; height: auto; margin-left: 10px;">
-                {% endif %}
             </li>
         {% empty %}
             <li class="list-group-item">Немає оголошень.</li>
