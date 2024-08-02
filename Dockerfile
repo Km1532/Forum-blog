@@ -1,7 +1,11 @@
+# Використовуйте базовий образ, який підтримує потрібну версію Python
 FROM python:3.12-slim-bullseye
 
 # Оновлюємо pip, setuptools і wheel до останніх версій
 RUN pip install --upgrade pip setuptools wheel
+
+# Перевірка версії Python
+RUN python --version
 
 # Налаштовуємо змінні середовища
 ENV PYTHONUNBUFFERED 1
